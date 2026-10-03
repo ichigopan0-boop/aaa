@@ -137,7 +137,7 @@ G.Hud = {
       bar.style.width = (f * 100) + '%'; bar.style.background = w.sleep ? '#888' : f < 0.25 ? '#ff5a4e' : f < 0.5 ? '#ffd23b' : '#7ee07a';
     }
     const at = G.Prog.data.equip.arrow;
-    this.el['arrow-count'].textContent = (at !== 'normal' ? G.Items.arrows[at].name.replace('の矢', '').replace('矢', '') + ' ' : '') + G.Prog.arrowCount(at);
+    this.el['arrow-count'].textContent = (at !== 'normal' ? G.Items.arrows[at].name.replace('の矢', '').replace('矢', '') + ' ' : '') + G.Prog.arrowText(at);
   },
   setPrompt(html) {
     const e = this.el.prompt;

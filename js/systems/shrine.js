@@ -247,7 +247,7 @@ G.Shrine = {
       this.chest(7, 44); this.altar(48);
     } else if (tr === 'archery') {
       this.room(W, 56);
-      this.pedestal(-4, 3, '台座を調べる（弓と矢）', () => { if (!G.Prog.equipped('bow')) G.Prog.addWeapon('trav_bow'); G.Prog.addArrows('normal', 20); G.Hud.notify('矢を20本手に入れた'); });
+      this.pedestal(-4, 3, '台座を調べる（弓）', () => { if (!G.Prog.equipped('bow')) { G.Prog.addWeapon('trav_bow'); G.Hud.notify('旅人の弓を手に入れた（普通の矢は無限に撃てる）'); } else G.Hud.notify('普通の矢は弓があれば無限に撃てる'); });
       this.crystal('a', -10, 6, 20); this.crystal('b', 10, 9, 26); this.crystal('c', 0, 14, 34);
       const m1 = this.mover(-6, 5, 30, 2, 2, [[-10, 5, 30], [10, 5, 30]], 4); const c1 = this.crystal('d', -6, 6.3, 30); c1.follow = m1;
       const m2 = this.mover(6, 3, 38, 2, 2, [[6, 3, 38], [6, 12, 38]], 3); const c2 = this.crystal('e', 6, 4.3, 38); c2.follow = m2;

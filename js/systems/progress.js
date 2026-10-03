@@ -149,12 +149,14 @@ G.Prog = {
   },
   // ---- 矢 ----
   addArrows(t, n) { this.data.inv.arrows[t] = (this.data.inv.arrows[t] || 0) + n; G.Events.emit('invChanged'); },
-  arrowCount(t) { return this.data.inv.arrows[t || this.data.equip.arrow] || 0; },
-  useArrow() { const t = this.data.equip.arrow; if (this.arrowCount(t) <= 0) return null; this.data.inv.arrows[t]--; G.Events.emit('invChanged'); return t; },
+  // 普通の矢は弓があれば無限に撃てる
+  arrowCount(t) { t = t || this.data.equip.arrow; return t === 'normal' ? Infinity : (this.data.inv.arrows[t] || 0); },
+  arrowText(t) { const n = this.arrowCount(t); return n === Infinity ? '∞' : String(n); },
+  useArrow() { const t = this.data.equip.arrow; if (t === 'normal') return t; if (this.arrowCount(t) <= 0) return null; this.data.inv.arrows[t]--; G.Events.emit('invChanged'); return t; },
   cycleArrow() {
     const order = G.Items.arrowOrder; let i = order.indexOf(this.data.equip.arrow);
     for (let k = 0; k < order.length; k++) { i = (i + 1) % order.length; if (this.arrowCount(order[i]) > 0 || order[i] === 'normal') break; }
-    this.data.equip.arrow = order[i]; G.Events.emit('invChanged'); G.Hud.notify('矢: ' + G.Items.arrows[order[i]].name + ' ×' + this.arrowCount(order[i]));
+    this.data.equip.arrow = order[i]; G.Events.emit('invChanged'); G.Hud.notify('矢: ' + G.Items.arrows[order[i]].name + ' ×' + this.arrowText(order[i]));
   },
   // ---- 素材・料理 ----
   addMat(id, n = 1) { this.data.inv.mats[id] = (this.data.inv.mats[id] || 0) + n; G.Events.emit('invChanged'); },

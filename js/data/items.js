@@ -169,17 +169,17 @@ G.Items.potions = {
 G.Items.shops = {
   hajimari: [
     { k: 'w', id: 'trav_sword', p: 60 }, { k: 'w', id: 'trav_spear', p: 60 }, { k: 'w', id: 'woodcutter_axe', p: 50 }, { k: 'w', id: 'trav_bow', p: 70 },
-    { k: 'a', id: 'normal', n: 10, p: 20 }, { k: 'm', id: 'apple', p: 5 }, { k: 'm', id: 'meat', p: 12 }, { k: 'm', id: 'spicy', p: 15 },
+    { k: 'a', id: 'fire', n: 3, p: 40 }, { k: 'm', id: 'apple', p: 5 }, { k: 'm', id: 'meat', p: 12 }, { k: 'm', id: 'spicy', p: 15 },
     { k: 'f', id: 'heal_potion', p: 40 },
   ],
   stable: [
     { k: 'w', id: 'soldier_sword', p: 150 }, { k: 'w', id: 'trav_claymore', p: 110 }, { k: 'w', id: 'soldier_bow', p: 180 }, { k: 'w', id: 'fire_rod', p: 300 },
-    { k: 'a', id: 'normal', n: 10, p: 20 }, { k: 'a', id: 'fire', n: 5, p: 60 }, { k: 'a', id: 'ice', n: 5, p: 60 },
+    { k: 'a', id: 'fire', n: 5, p: 60 }, { k: 'a', id: 'ice', n: 5, p: 60 }, { k: 'a', id: 'elec', n: 5, p: 70 },
     { k: 'm', id: 'honey', p: 25 }, { k: 'm', id: 'swift', p: 20 }, { k: 'f', id: 'heal_potion', p: 40 },
   ],
   snow: [
     { k: 'w', id: 'soldier_claymore', p: 240 }, { k: 'w', id: 'soldier_spear', p: 180 }, { k: 'w', id: 'frost_sword', p: 520 }, { k: 'w', id: 'ice_rod', p: 340 },
-    { k: 'a', id: 'normal', n: 10, p: 20 }, { k: 'a', id: 'fire', n: 5, p: 60 }, { k: 'm', id: 'spicy', p: 12 }, { k: 'm', id: 'tough', p: 25 },
+    { k: 'a', id: 'fire', n: 5, p: 60 }, { k: 'm', id: 'spicy', p: 12 }, { k: 'm', id: 'tough', p: 25 },
     { k: 'f', id: 'warm_potion', p: 60 }, { k: 'f', id: 'heal_potion', p: 40 },
   ],
   fire: [
@@ -189,7 +189,7 @@ G.Items.shops = {
   ],
   lake: [
     { k: 'w', id: 'knight_spear', p: 450 }, { k: 'w', id: 'knight_bow', p: 500 }, { k: 'w', id: 'triple_bow', p: 680 }, { k: 'w', id: 'thunder_rod', p: 380 },
-    { k: 'w', id: 'frost_spear', p: 560 }, { k: 'a', id: 'elec', n: 5, p: 70 }, { k: 'a', id: 'normal', n: 20, p: 38 },
+    { k: 'w', id: 'frost_spear', p: 560 }, { k: 'a', id: 'elec', n: 5, p: 70 }, { k: 'a', id: 'bomb', n: 3, p: 70 },
     { k: 'm', id: 'big_fish', p: 20 }, { k: 'm', id: 'mpflower', p: 25 }, { k: 'f', id: 'heal_potion', p: 40 },
   ],
 };

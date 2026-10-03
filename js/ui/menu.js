@@ -56,10 +56,10 @@ G.UI = {
     }
     B.appendChild(grid);
     if (cat === 'bow') {
-      B.appendChild(G.U.html('div', 'sec-title', '矢（Xキーで切り替え）'));
+      B.appendChild(G.U.html('div', 'sec-title', '矢（Xキーで切り替え・普通の矢は無限）'));
       const g2 = G.U.html('div', 'grid');
       for (const at of G.Items.arrowOrder) {
-        const n = P.arrowCount(at); const A = G.Items.arrows[at];
+        const n = P.arrowText(at); const A = G.Items.arrows[at];
         const e = G.U.html('div', '', A.name); e.style.cssText = 'font-size:12px;text-align:center;padding:4px;color:#' + A.color.toString(16).padStart(6, '0');
         g2.appendChild(this.cell(e, { cnt: n, eq: d.equip.arrow === at, onclick: () => { d.equip.arrow = at; G.Events.emit('invChanged'); this.render(); } }));
       }
@@ -220,7 +220,7 @@ G.UI = {
         const row = G.U.html('div', 'shop-item');
         let nm, desc, icon;
         if (it.k === 'w') { const w = G.Items.weapons[it.id]; nm = w.name; desc = '攻撃力' + w.atk + ' 耐久' + w.dur + '　' + w.desc; icon = this.iconCanvas(it.id); }
-        else if (it.k === 'a') { nm = G.Items.arrows[it.id].name + ' ×' + it.n; desc = '所持 ' + P.arrowCount(it.id); icon = G.U.html('div', 'emo', '🏹'); }
+        else if (it.k === 'a') { nm = G.Items.arrows[it.id].name + ' ×' + it.n; desc = '所持 ' + P.arrowText(it.id); icon = G.U.html('div', 'emo', '🏹'); }
         else if (it.k === 'm') { const m = G.Items.mats[it.id]; nm = m.name; desc = m.desc + '（所持 ' + P.matCount(it.id) + '）'; icon = G.U.html('div', 'emo', m.ic); }
         else if (it.k === 'f') { const f = G.Items.potions[it.id]; nm = f.name; desc = (f.heal ? '回復' + f.heal / 4 + 'ハート ' : '') + (f.eff ? G.Items.effectDesc[f.eff] + ' Lv' + f.pow : ''); icon = G.U.html('div', 'emo', f.ic); }
         icon.style.fontSize = '26px'; row.appendChild(icon);

@@ -94,7 +94,7 @@ G.Pickups = {
   },
   zoneLoot(zone, r) {
     const T = {
-      1: [{ k: 'a', id: 'normal', n: 10 }, { k: 'g', n: 30 }, { k: 'w', id: 'trav_spear' }, { k: 'w', id: 'woodcutter_axe' }, { k: 'm', id: 'amber', n: 1 }, { k: 'w', id: 'trav_claymore' }, { k: 'a', id: 'normal', n: 15 }, { k: 'f', id: 'heal_potion' }],
+      1: [{ k: 'a', id: 'fire', n: 3 }, { k: 'g', n: 30 }, { k: 'w', id: 'trav_spear' }, { k: 'w', id: 'woodcutter_axe' }, { k: 'm', id: 'amber', n: 1 }, { k: 'w', id: 'trav_claymore' }, { k: 'g', n: 50 }, { k: 'f', id: 'heal_potion' }],
       2: [{ k: 'w', id: 'soldier_sword' }, { k: 'w', id: 'soldier_bow' }, { k: 'a', id: 'fire', n: 5 }, { k: 'a', id: 'ice', n: 5 }, { k: 'g', n: 100 }, { k: 'm', id: 'opal', n: 1 }, { k: 'w', id: 'soldier_spear' }, { k: 'w', id: 'fire_rod' }, { k: 'a', id: 'elec', n: 5 }],
       3: [{ k: 'w', id: 'knight_sword' }, { k: 'w', id: 'knight_bow' }, { k: 'w', id: 'flame_sword' }, { k: 'w', id: 'thunder_sword' }, { k: 'w', id: 'frost_sword' }, { k: 'a', id: 'bomb', n: 5 }, { k: 'g', n: 200 }, { k: 'm', id: 'topaz', n: 1 }, { k: 'w', id: 'thunder_rod' }, { k: 'w', id: 'ice_rod' }, { k: 'w', id: 'falcon_bow' }, { k: 'w', id: 'knight_claymore' }],
       4: [{ k: 'w', id: 'royal_sword' }, { k: 'w', id: 'knight_claymore' }, { k: 'a', id: 'bomb', n: 10 }, { k: 'a', id: 'ancient', n: 3 }, { k: 'm', id: 'diamond', n: 1 }, { k: 'g', n: 500 }, { k: 'w', id: 'meteor_rod' }, { k: 'w', id: 'blizzard_rod' }, { k: 'w', id: 'storm_rod' }, { k: 'w', id: 'triple_bow' }, { k: 'm', id: 'ancient_core', n: 1 }],
