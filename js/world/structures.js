@@ -45,6 +45,8 @@ G.Struct = {
   cyl(group, rt, rb, h, color, x, y, z, seg = 10, opts) { const m = this.mesh(new THREE.CylinderGeometry(rt, rb, h, seg), color, x, y, z, opts); group.add(m); return m; },
   build(scene) {
     this.scene = scene;
+    this.lampMat = new THREE.MeshBasicMaterial({ color: 0x665533 });
+    const start = scene.children.length;
     for (const v of G.World.villages) this.buildVillage(v);
     for (const t of G.World.towers) this.buildTower(t);
     for (const s of G.World.shrines) this.buildShrine(s);
@@ -54,6 +56,46 @@ G.Struct = {
     this.buildBridges();
     this.buildSwordPedestal();
     this.buildUpdrafts();
+    this.mergeStatic(scene.children.slice(start));
+  },
+  // 動かない建物のメッシュを素材ごとにまとめて描画回数を減らす
+  mergeStatic(roots) {
+    const groups = new Map(); const remove = [];
+    for (const r of roots) r.updateMatrixWorld(true);
+    const visit = (o) => {
+      if (o.userData.dynamic) return;
+      if (o.isMesh && !o.isInstancedMesh && o.material && (o.material.isMeshToonMaterial || o.material === this.lampMat) && !o.material.transparent && o.visible) {
+        const cx = Math.floor(o.matrixWorld.elements[12] / 200), cz = Math.floor(o.matrixWorld.elements[14] / 200);
+        const key = o.material.id + '|' + cx + '|' + cz + '|' + (o.castShadow ? 1 : 0);
+        let g = groups.get(key); if (!g) { g = { mat: o.material, list: [], shadow: o.castShadow }; groups.set(key, g); }
+        g.list.push(o); remove.push(o);
+      }
+      for (const c of o.children.slice()) visit(c);
+    };
+    for (const r of roots) visit(r);
+    for (const g of groups.values()) {
+      const vc = !!g.mat.vertexColors;
+      const geo = G.Geo.merge(g.list.map(m => ({ geo: m.geometry, matrix: m.matrixWorld, color: 0xffffff })), vc);
+      if (!vc) geo.deleteAttribute('color');
+      const mesh = new THREE.Mesh(geo, g.mat); mesh.castShadow = g.shadow; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false;
+      if (g.mat === this.lampMat) this.lamps.push(mesh);
+      this.scene.add(mesh);
+    }
+    for (const m of remove) { if (m.parent) m.parent.remove(m); if (this.lamps.includes(m)) this.lamps.splice(this.lamps.indexOf(m), 1); }
+    // 空になったグループを片付ける
+    for (const r of roots) if (r.isGroup && r.children.length === 0) this.scene.remove(r);
+    // 遠くのものは描画しない
+    this.cullables = [];
+    for (const o of this.scene.children) {
+      if (o.userData.noCull || o === this.barrier || o.isLight || o === (this.malice && this.malice.bim)) continue;
+      if (o.isMesh && !o.isInstancedMesh && o.matrixAutoUpdate === false && o.geometry.boundingSphere) { const c = o.geometry.boundingSphere.center; this.cullables.push({ o, x: c.x, z: c.z, r: o.geometry.boundingSphere.radius }); }
+      else if (o.isGroup) this.cullables.push({ o, x: o.position.x, z: o.position.z, r: 20 });
+    }
+  },
+  updateCulling(px, pz, far) {
+    if (!this.cullables) return;
+    for (const c of this.cullables) c.o.visible = Math.hypot(c.x - px, c.z - pz) - c.r < far;
+    if (this.malice) { const v = Math.hypot(px, pz) < far + 150; this.malice.bim.visible = v; this.malice.em.visible = v; }
   },
   groundY(x, z) { return G.Terrain.getHeight(x, z); },
   // ---- 家 ----
@@ -65,7 +107,7 @@ G.Struct = {
     if (style === 'lake') { wall = 0xeaf6f7; roof = r.pick([0x2f8fb0, 0x3fb5a0]); beam = 0x6fa8b8; }
     if (style === 'fire') {
       this.cyl(g, W * 0.5, W * 0.55, H, 0x8a7060, 0, H / 2, 0, 9);
-      this.mesh; const c = this.mesh(new THREE.ConeGeometry(W * 0.62, H * 0.9, 9), 0x5a4038, 0, H + H * 0.45, 0); g.add(c);
+      const c = this.mesh(new THREE.ConeGeometry(W * 0.62, H * 0.9, 9), 0x5a4038, 0, H + H * 0.45, 0); g.add(c);
       this.box(g, 1.4, 2.2, 0.3, 0x2a1a14, 0, 1.1, W * 0.53);
       g.position.set(x, y, z); g.rotation.y = ry; this.scene.add(g);
       G.Col.addCyl(x, z, W * 0.55, y - 1, y + H, {});
@@ -76,8 +118,7 @@ G.Struct = {
     this.box(g, W + 0.3, 0.3, D + 0.3, beam, 0, H, 0);
     const rf = this.mesh(G.Geo.prism(D + 1.2, 2.6, W + 1.2), roof, 0, H + 0.15, 0, { ry: Math.PI / 2 }); g.add(rf);
     this.box(g, 1.3, 2.3, 0.2, 0x4a3020, 0, 1.15, D / 2 + 0.05);
-    const winM = new THREE.MeshBasicMaterial({ color: 0xffe9a8 });
-    for (const sx of [-1, 1]) { const w = this.mesh(new THREE.BoxGeometry(0.9, 0.8, 0.15), 0, sx * W * 0.3, H * 0.6, D / 2 + 0.05, { mat: winM, shadow: false }); g.add(w); this.lamps.push(w); }
+    for (const sx of [-1, 1]) { const w = this.mesh(G.Models.boxG(0.9, 0.8, 0.15), 0, sx * W * 0.3, H * 0.6, D / 2 + 0.05, { mat: this.lampMat, shadow: false }); g.add(w); }
     this.box(g, 0.8, 2, 0.8, 0x8a7a6a, W * 0.3, H + 1.4, -D * 0.2);
     g.position.set(x, y - 0.05, z); g.rotation.y = ry; this.scene.add(g);
     const sw = (Math.abs(Math.sin(ry)) > 0.5) ? D : W, sd = (Math.abs(Math.sin(ry)) > 0.5) ? W : D;
@@ -121,7 +162,7 @@ G.Struct = {
       this.cyl(g, 1.1, 1.2, 1, 0x9a948a, 0, 0.5, 0, 10);
       this.cyl(g, 0.9, 0.9, 1.05, 0x2a4a6a, 0, 0.55, 0, 10);
       for (const s of [-1, 1]) this.box(g, 0.15, 2.2, 0.15, 0x6b4a2e, s * 0.9, 1.6, 0);
-      this.mesh; g.add(this.mesh(G.Geo.prism(2.4, 0.8, 1.6), 0xb5543a, 0, 2.6, 0));
+      g.add(this.mesh(G.Geo.prism(2.4, 0.8, 1.6), 0xb5543a, 0, 2.6, 0));
       g.position.set(wx, wy, wz); this.scene.add(g); G.Col.addCyl(wx, wz, 1.2, wy - 1, wy + 1, {});
     }
     for (let i = 0; i < 4; i++) {
@@ -133,7 +174,7 @@ G.Struct = {
       const wx = v.x - 18, wz = v.z - 16, wy = this.groundY(wx, wz); const g = new THREE.Group();
       this.cyl(g, 1.6, 2.6, 11, 0xe8dcc0, 0, 5.5, 0, 8);
       g.add(this.mesh(new THREE.ConeGeometry(2.2, 2.5, 8), 0xb5543a, 0, 12.2, 0));
-      const hub = new THREE.Group(); hub.position.set(0, 9.5, 2.4);
+      const hub = new THREE.Group(); hub.position.set(0, 9.5, 2.4); hub.userData.dynamic = true;
       for (let k = 0; k < 4; k++) { const b = this.mesh(new THREE.BoxGeometry(0.7, 7, 0.1), 0xf4ead8, 0, 3.6, 0); const arm = new THREE.Group(); arm.rotation.z = k * Math.PI / 2; arm.add(b); hub.add(arm); }
       g.add(hub); g.position.set(wx, wy, wz); this.scene.add(g);
       G.Col.addCyl(wx, wz, 2.6, wy - 1, wy + 11, {});
@@ -173,10 +214,8 @@ G.Struct = {
     const y = this.groundY(x, z); const g = new THREE.Group();
     this.box(g, 0.2, 3, 0.2, 0x5a4030, 0, 1.5, 0);
     this.box(g, 0.9, 0.12, 0.12, 0x5a4030, 0.35, 2.9, 0);
-    const lm = new THREE.MeshBasicMaterial({ color: 0x665533 });
-    const l = this.mesh(new THREE.BoxGeometry(0.45, 0.55, 0.45), 0, 0.75, 2.55, 0, { mat: lm, shadow: false }); g.add(l);
+    const l = this.mesh(G.Models.boxG(0.45, 0.55, 0.45), 0, 0.75, 2.55, 0, { mat: this.lampMat, shadow: false }); g.add(l);
     g.position.set(x, y, z); this.scene.add(g);
-    this.lamps.push(l);
     G.Col.addCyl(x, z, 0.25, y - 1, y + 3, {});
   },
   cookingPot(x, z) {
@@ -215,8 +254,8 @@ G.Struct = {
     }
     for (let k = 1; k < 8; k++) this.box(g, 7.6, 0.4, 7.6, dark, 0, k * H / 8, 0);
     const glowMat = new THREE.MeshBasicMaterial({ color: 0xff8a30 });
-    const lines = [];
-    for (let k = 0; k < 6; k++) { const ln = this.mesh(new THREE.BoxGeometry(4.5, 0.25, 4.5), 0, 0, 3 + k * 7.3, 0, { mat: glowMat, shadow: false }); g.add(ln); lines.push(ln); }
+    const lineGeo = G.Models.g('towerlines', () => G.Geo.merge([0, 1, 2, 3, 4, 5].map(k => ({ geo: new THREE.BoxGeometry(4.5, 0.25, 4.5), matrix: G.Geo.mtx(0, 3 + k * 7.3, 0) })), false));
+    g.add(this.mesh(lineGeo, 0, 0, 0, 0, { mat: glowMat, shadow: false }));
     this.box(g, 11, 1, 11, dark, 0, H + 0.5, 0);
     const term = this.mesh(new THREE.CylinderGeometry(0.5, 0.8, 1.4, 8), stone, 0, H + 1.7, 0); g.add(term);
     const orb = this.mesh(new THREE.SphereGeometry(0.4, 10, 8), 0, 0, H + 2.7, 0, { mat: glowMat, shadow: false }); g.add(orb);
@@ -313,14 +352,19 @@ G.Struct = {
     // 瘴気
     const malice = new THREE.MeshBasicMaterial({ color: 0x8a1a4a, transparent: true, opacity: 0.75 });
     const r = G.U.rng(66);
-    const blobs = [];
+    const blobs = [], eyes = [];
+    const bim = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 6), malice, 26); bim.frustumCulled = false;
     for (let k = 0; k < 26; k++) {
       const a = r.range(0, 6.28), d = r.range(52, 140), x = Math.cos(a) * d, z = Math.sin(a) * d, gy = this.groundY(x, z);
-      const b = this.mesh(new THREE.SphereGeometry(r.range(1.5, 3.5), 8, 6), 0, x, gy, z, { mat: malice, shadow: false }); b.scale.y = 0.4; g.add(b); blobs.push(b);
-      const eye = this.mesh(new THREE.SphereGeometry(0.4, 6, 5), 0, x, gy + 0.8, z, { mat: G.Mat.glow(0xffcc33), shadow: false }); g.add(eye);
+      blobs.push({ x, y: gy, z, s: r.range(1.5, 3.5) });
+      eyes.push({ geo: new THREE.SphereGeometry(0.4, 6, 5), matrix: G.Geo.mtx(x, gy + 0.8, z) });
     }
+    this.scene.add(bim);
+    const em = new THREE.Mesh(G.Geo.merge(eyes, false), G.Mat.glow(0xffcc33)); this.scene.add(em);
+    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
     this.scene.add(g);
-    this.anim.push((dt, t) => { blobs.forEach((b, i) => { b.scale.x = b.scale.z = 1 + Math.sin(t * 1.5 + i) * 0.12; }); });
+    this.anim.push((dt, t) => { if (!bim.visible) return; blobs.forEach((b, i) => { const k = 1 + Math.sin(t * 1.5 + i) * 0.12; m4.compose(v.set(b.x, b.y, b.z), q, sc.set(b.s * k, b.s * 0.4, b.s * k)); bim.setMatrixAt(i, m4); }); bim.instanceMatrix.needsUpdate = true; });
+    this.malice = { bim, em };
     // ボス戦の障壁
     const bm = new THREE.MeshBasicMaterial({ color: 0xff2266, transparent: true, opacity: 0.25, side: THREE.DoubleSide, depthWrite: false });
     this.barrier = this.mesh(new THREE.CylinderGeometry(47, 47, 30, 40, 1, true), 0, 0, cy + 14, 0, { mat: bm, shadow: false });
@@ -378,7 +422,7 @@ G.Struct = {
     const S = G.World.sealSword, y = this.groundY(S.x, S.z); const g = new THREE.Group();
     this.cyl(g, 2.2, 2.6, 0.8, 0x8a867c, 0, 0.4, 0, 10);
     this.cyl(g, 1.2, 1.4, 0.6, 0x9a968c, 0, 1.1, 0, 8);
-    const sw = G.Models.weapon('seal_sword'); sw.rotation.x = Math.PI; sw.position.y = 2.9; g.add(sw);
+    const sw = G.Models.weapon('seal_sword'); sw.rotation.x = Math.PI; sw.position.y = 2.9; sw.userData.dynamic = true; g.add(sw);
     const beam = this.mesh(new THREE.CylinderGeometry(1.4, 1.4, 60, 12, 1, true), 0, 0, 30, 0, { mat: new THREE.MeshBasicMaterial({ color: 0xbfe0ff, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide }), shadow: false }); g.add(beam);
     g.position.set(S.x, y, S.z); this.scene.add(g);
     G.Col.addCyl(S.x, S.z, 2.4, y - 1, y + 0.8, {});
@@ -401,6 +445,6 @@ G.Struct = {
   update(dt, t) {
     for (const f of this.anim) f(dt, t);
     const night = G.Sky.isNight();
-    if (night !== this._night) { this._night = night; for (const l of this.lamps) l.material.color.setHex(night ? 0xffd27a : 0x665533); }
+    if (night !== this._night) { this._night = night; this.lampMat.color.setHex(night ? 0xffd27a : 0x665533); }
   },
 };

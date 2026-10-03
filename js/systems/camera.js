@@ -37,6 +37,18 @@ G.Cam = {
     this.dir.set(Math.sin(this.yaw) * Math.cos(this.pitch), Math.sin(this.pitch), Math.cos(this.yaw) * Math.cos(this.pitch));
     let d = G.Col.rayDist(this.pivot, this.dir, dist);
     this.dist = d < this.dist ? d : G.U.damp(this.dist, d, 6, dt);
+    // 木の葉の中にカメラが入らないようにする
+    for (let it = 0; it < 6; it++) {
+      const cx = this.pivot.x + this.dir.x * this.dist, cy = this.pivot.y + this.dir.y * this.dist, cz = this.pivot.z + this.dir.z * this.dist;
+      let inside = false;
+      for (const c of G.Col.query(cx, cz, 5, this._q || (this._q = []))) {
+        if (!c.tree) continue;
+        const s = Math.max(0.5, (c.y1 - c.y0 - 2) / 8), ty = c.y0 + 2 + 5.3 * s, r = 2.7 * s;
+        if ((cx - c.x) ** 2 + (cy - ty) ** 2 * 0.8 + (cz - c.z) ** 2 < r * r) { inside = true; break; }
+      }
+      if (!inside || this.dist < 1.2) break;
+      this.dist *= 0.8;
+    }
     const tx = this.pivot.x + this.dir.x * this.dist, ty = this.pivot.y + this.dir.y * this.dist, tz = this.pivot.z + this.dir.z * this.dist;
     cam.position.set(tx, ty, tz);
     if (this.shake > 0) { cam.position.x += (Math.random() - 0.5) * this.shake; cam.position.y += (Math.random() - 0.5) * this.shake; this.shake = Math.max(0, this.shake - dt * 3); }

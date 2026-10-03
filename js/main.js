@@ -74,7 +74,7 @@ G.Game = {
   prepare(mode, name, color) { this.loadData(mode, name, color); this.buildEntities(); },
   begin() {
     const d = G.Prog.data, pl = G.player;
-    G.Title.hide(); G.Hud.show(true); G.state = 'playing';
+    G.Title.hide(); G.Hud.show(true); G.state = 'playing'; document.body.classList.add('playing');
     G.Sky.time = d.time != null ? d.time : 8; G.Weather.target = d.weather || 'clear';
     if (d.pos && !this.isNew) pl.teleport(d.pos[0], G.Col.floorAt(d.pos[0], d.pos[2], d.pos[1] + 1.5) + 0.05, d.pos[2], d.rotY);
     else pl.teleport(0, null, 482, Math.PI);
@@ -135,7 +135,7 @@ G.Game = {
       G.Title.update(dt);
       const c = new THREE.Vector3(0, 30, 300);
       G.Sky.update(dt, c); G.Water.update(dt); G.Veg.update(dt, c); G.Struct.update(dt, now / 1000); G.Particles.update(dt);
-      G.Terrain.updateVisibility(c.x, c.z, G.settings.viewDist); G.Veg.updateVisibility(c.x, c.z, G.settings.viewDist);
+      G.Terrain.updateVisibility(c.x, c.z, G.settings.viewDist); G.Veg.updateVisibility(c.x, c.z, G.settings.viewDist); G.Struct.updateCulling(c.x, c.z, G.settings.viewDist);
       if (render) G.renderer.render(G.scene, G.camera);
       G.Input.endFrame();
       return;
@@ -173,7 +173,7 @@ G.Game = {
     G.Net.update(dt);
     this.pickMusic(dt);
     this.visT -= dt;
-    if (this.visT <= 0) { this.visT = 0.4; const vd = G.Sky.indoor ? 0 : G.settings.viewDist; G.Terrain.updateVisibility(pl.pos.x, pl.pos.z, vd); G.Veg.updateVisibility(pl.pos.x, pl.pos.z, vd); }
+    if (this.visT <= 0) { this.visT = 0.4; const vd = G.Sky.indoor ? 0 : G.settings.viewDist; G.Terrain.updateVisibility(pl.pos.x, pl.pos.z, vd); G.Veg.updateVisibility(pl.pos.x, pl.pos.z, vd); G.Struct.updateCulling(pl.pos.x, pl.pos.z, G.Sky.indoor ? 0 : vd * 0.9); G.Pickups.updateCulling(pl.pos.x, pl.pos.z); }
     this.saveT += dt;
     if (this.saveT > 60 && G.state === 'playing' && !pl.dead && !G.Shrine.inside) { this.saveT = 0; G.Prog.data.hp = pl.hp; G.Prog.save(); }
     if (G.settings.showFps) { this.fpsN++; this.fpsT += dt; if (this.fpsT > 0.5) { G.toast('FPS ' + Math.round(this.fpsN / this.fpsT), 600); this.fpsN = 0; this.fpsT = 0; } }

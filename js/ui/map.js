@@ -78,8 +78,8 @@ G.Map = {
     }
     this.drawMarkers(c, (x, z) => this.w2s(x, z), 1);
     // ワープ地点の説明
-    c.font = '13px sans-serif'; c.fillStyle = '#ccc'; c.textAlign = 'left';
-    c.fillText('ワープ可能：クリア済みの祠・起動した塔・訪れた村（アイコンをクリック）', 12, H - 34);
+    c.font = '13px sans-serif'; c.fillStyle = '#ccc'; c.textAlign = 'center';
+    c.fillText('ワープ：クリア済みの祠・起動した塔・訪れた村のアイコンを選ぶ', W / 2, 22);
   },
   drawMarkers(c, w2s, big) {
     const d = G.Prog.data;

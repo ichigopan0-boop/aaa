@@ -110,11 +110,21 @@ G.Col = {
     const mx = o.x + dir.x * maxD * 0.5, mz = o.z + dir.z * maxD * 0.5;
     const list = this.query(mx, mz, maxD * 0.5 + 1, this._q);
     for (const c of list) {
-      if (c.t !== 'b' || c.noCam) continue;
-      const t = this.rayBox(o, dir, c);
+      if (c.noCam) continue;
+      const t = c.t === 'b' ? this.rayBox(o, dir, c) : (c.tree ? -1 : this.rayCyl(o, dir, c));
       if (t >= 0 && t < best) best = Math.max(0.3, t - 0.3);
     }
     return best;
+  },
+  // レイと縦の円柱
+  rayCyl(o, d, c) {
+    const ox = o.x - c.x, oz = o.z - c.z;
+    const a = d.x * d.x + d.z * d.z; if (a < 1e-6) return -1;
+    const b = 2 * (ox * d.x + oz * d.z), cc = ox * ox + oz * oz - c.r * c.r;
+    if (cc < 0) return -1; // 内側から（プレイヤーが中にいる）
+    const disc = b * b - 4 * a * cc; if (disc < 0) return -1;
+    const t = (-b - Math.sqrt(disc)) / (2 * a); if (t < 0) return -1;
+    const y = o.y + d.y * t; return y > c.y0 && y < c.y1 ? t : -1;
   },
   rayBox(o, d, b) {
     let tmin = 0, tmax = 1e9;

@@ -57,6 +57,8 @@ G.Touch = {
   },
   show(on) { G.U.el('touch-ui').classList.toggle('hidden', !(on && G.isTouchActive)); },
   update() {
+    const busy = G.UI.menuOpen || G.UI.panelOpen || G.Map.open || G.Dialog.active || G.state !== 'playing';
+    if (busy !== this._busy) { this._busy = busy; G.U.el('touch-ui').style.visibility = busy ? 'hidden' : 'visible'; }
     const ib = G.U.el('tb-interact');
     const showI = !G.U.el('prompt').classList.contains('hidden');
     ib.style.opacity = showI ? 1 : 0.45;

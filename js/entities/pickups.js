@@ -331,6 +331,11 @@ G.Pickups = {
       t.onMelee(dmg, f, def && def.elem);
     }
   },
+  updateCulling(px, pz) {
+    const near = (p, r) => Math.abs(p.x - px) + Math.abs(p.z - pz) < r;
+    for (const c of this.chests) c.mesh.visible = (!c.hidden || c.revealed) && (c.interior ? c.interior === G.Shrine.insideId : near(c.pos, 170));
+    for (const s of this.seeds) if (!s.found) s.mesh.visible = near(s.pos, 150);
+  },
   update(dt) {
     this.updateDrops(dt); this.updateSeeds(dt); this.updateHarvest(dt); this.updateOres(dt);
     // 宝箱の光

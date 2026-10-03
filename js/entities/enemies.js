@@ -47,7 +47,7 @@ G.Enemy = class {
     this.burn = 0; this.frozen = 0; this.stun = 0; this.slow = 0; this.flash = 0; this.alertT = 0; this.atk = null; this.atkSeq = 0; this.lastHitSeq = -1;
     this.target = null; this.deadT = 0; this.respawnT = 0; this.seen = false; this.lookout = opts.lookout || null;
     this.yOffset = d.flying ? 3 : 0;
-    this.netTarget = null; this.visibleRange = 170;
+    this.netTarget = null; this.visibleRange = G.settings.quality === 0 ? 110 : 150;
     this.model = null; this.contrib = new Set();
   }
   buildModel(scene) {

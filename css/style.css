@@ -178,6 +178,7 @@ button { font-family: var(--font); }
 .skill .sk-desc { color: var(--dim); font-size: 11px; }
 .skill .sk-rank { color: var(--gold); white-space: nowrap; }
 .skill.locked { opacity: 0.45; }
+.skill .mbtn { white-space: nowrap; flex-shrink: 0; }
 .quest { background: #0005; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; border-left: 4px solid var(--gold2); }
 .quest.main { border-left-color: #ff7043; }
 .quest.done { opacity: 0.5; }
@@ -211,30 +212,57 @@ button { font-family: var(--font); }
 
 /* ---- タッチ ---- */
 #touch-ui { position: fixed; inset: 0; z-index: 15; pointer-events: none; }
-#joy-zone { position: absolute; left: 0; bottom: 0; width: 45%; height: 60%; pointer-events: auto; }
-#joy-base { position: absolute; width: 130px; height: 130px; border-radius: 50%; background: #ffffff1a; border: 2px solid #fff4; left: 40px; bottom: 40px; }
+#joy-zone { position: absolute; left: 0; bottom: 0; width: 42%; height: 62%; pointer-events: auto; }
+#joy-base { position: absolute; width: 130px; height: 130px; border-radius: 50%; background: #ffffff1a; border: 2px solid #fff4; left: 30px; bottom: 30px; }
 #joy-knob { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #ffffff55; left: 37px; top: 37px; }
-#look-zone { position: absolute; right: 0; top: 0; width: 55%; height: 100%; pointer-events: auto; }
-#tbtns { position: absolute; right: 12px; bottom: 96px; width: 250px; height: 260px; pointer-events: none; }
-.tb { pointer-events: auto; position: absolute; width: 58px; height: 58px; border-radius: 50%; border: 2px solid #fff6; background: #0007; color: #fff; font-size: 11px; font-weight: bold; }
+#look-zone { position: absolute; right: 0; top: 0; width: 58%; height: 100%; pointer-events: auto; }
+#tbtns { position: absolute; right: 8px; bottom: 8px; width: 240px; height: 250px; pointer-events: none; }
+.tb { pointer-events: auto; position: absolute; width: 54px; height: 54px; border-radius: 50%; border: 2px solid #fff6; background: #0007; color: #fff; font-size: 11px; font-weight: bold; padding: 0; }
 .tb.on, .tb:active { background: #e8c87288; }
-.tb.big { width: 84px; height: 84px; font-size: 15px; right: 10px; bottom: 0; }
-#tbtns .tb[data-k=jump] { right: 104px; bottom: 0; }
-#tbtns .tb[data-k=dodge] { right: 20px; bottom: 96px; }
-#tbtns .tb[data-k=dash] { right: 170px; bottom: 10px; }
-#tbtns .tb[data-k=bow] { right: 92px; bottom: 76px; }
-#tbtns .tb[data-k=magic] { right: 160px; bottom: 82px; }
-#tbtns .tb[data-k=lock] { right: 30px; bottom: 166px; }
-#tbtns .tb[data-k=interact] { right: 100px; bottom: 150px; background: #2a6a4a99; }
-#tbtns .tb[data-k=sneak] { right: 180px; bottom: 154px; }
-#tbtns .tb[data-k=heal] { right: 196px; bottom: 220px; width: 50px; height: 50px; }
-#ttop { position: absolute; top: 200px; right: 10px; display: flex; flex-direction: column; gap: 6px; }
-.tb.s { position: static; width: 64px; height: 30px; border-radius: 10px; font-size: 11px; }
-body.touch #hud-br { bottom: auto; top: 200px; right: 84px; transform: scale(0.75); transform-origin: top right; }
+.tb.big { width: 78px; height: 78px; font-size: 15px; right: 4px; bottom: 4px; }
+#tbtns .tb[data-k=jump] { right: 88px; bottom: 2px; width: 58px; height: 58px; }
+#tbtns .tb[data-k=dash] { right: 152px; bottom: 6px; }
+#tbtns .tb[data-k=dodge] { right: 12px; bottom: 90px; }
+#tbtns .tb[data-k=bow] { right: 76px; bottom: 70px; }
+#tbtns .tb[data-k=magic] { right: 138px; bottom: 70px; }
+#tbtns .tb[data-k=interact] { right: 60px; bottom: 134px; width: 60px; height: 60px; background: #2a6a4a99; }
+#tbtns .tb[data-k=lock] { right: 2px; bottom: 152px; width: 50px; height: 50px; }
+#tbtns .tb[data-k=sneak] { right: 128px; bottom: 132px; width: 48px; height: 48px; font-size: 10px; }
+#tbtns .tb[data-k=heal] { right: 182px; bottom: 132px; width: 48px; height: 48px; }
+#ttop { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: row; gap: 4px; pointer-events: none; }
+.tb.s { position: static; width: 54px; height: 28px; border-radius: 10px; font-size: 11px; }
+body.touch #hud-br { bottom: auto; top: 100px; left: 8px; right: auto; transform: scale(0.68); transform-origin: top left; }
 body.touch #quest-track { display: none; }
-body.touch #minimap { width: 120px; height: 120px; }
-body.touch #chat-log { bottom: 180px; font-size: 11px; }
-body.touch #notify { top: 30%; }
+body.touch #hud-tr { flex-direction: row-reverse; align-items: flex-start; right: 8px; top: 6px; }
+body.touch #hud-tr #hud-info, body.touch #hud-tr #money { font-size: 11px; padding: 2px 6px; }
+body.touch #minimap { width: 96px; height: 96px; border-width: 2px; }
+body.touch #chat-log { bottom: auto; top: 40px; left: 50%; transform: translateX(-50%); width: min(360px, 46vw); font-size: 11px; }
+body.touch #party { top: 150px; }
+body.touch #notify { top: 40%; }
+body.touch #room-info { top: 38px; font-size: 11px; }
+body.touch #room-info b { font-size: 13px; }
+body.touch #boss-bar { bottom: auto; top: 64px; width: min(420px, 50vw); }
+body.touch #stamina-wheel { transform: translate(30px, -80px); }
+body.touch #map-help { font-size: 10px; }
+#rotate-hint { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 70; background: #000d; border: 1px solid var(--gold2); border-radius: 14px; padding: 14px 20px; font-size: 15px; text-align: center; pointer-events: none; }
+@media (orientation: portrait) { body.touch.playing #rotate-hint { display: block; } }
+@media (max-height: 520px) {
+  .logo { font-size: 28px; }
+  .logo small { font-size: 12px; margin-top: 2px; }
+  .logo-sub { display: none; }
+  .title-menu { margin-top: 10px; gap: 6px; }
+  .tbtn { padding: 6px 18px; font-size: 15px; min-width: 240px; }
+  .tbtn.small { padding: 4px 12px; font-size: 12px; min-width: 150px; }
+  .title-foot { display: none; }
+  #title { justify-content: flex-start; padding-top: 10px; overflow-y: auto; }
+  #title input { font-size: 18px; padding: 5px 10px; }
+  #dialog { min-height: 96px; padding: 12px 18px 16px; bottom: 3%; }
+  #dlg-text { font-size: 15px; line-height: 1.55; min-height: 44px; }
+  #menu { inset: 2% 2%; }
+  .mtab { padding: 6px 9px; font-size: 13px; }
+  .cell { height: 70px; }
+  #panel { max-height: 94vh; padding: 10px 14px; }
+}
 
 /* ---- 死亡・エンディング ---- */
 #death-screen { position: fixed; inset: 0; z-index: 50; background: radial-gradient(ellipse, #3a0a0acc, #000e); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }

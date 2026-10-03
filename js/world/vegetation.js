@@ -196,7 +196,7 @@ G.Veg = {
     G.Col.addCyl(x, z, 5, h - 2, h + 24, { tree: true });
   },
   updateVisibility(px, pz, far) {
-    for (const g of this.chunkMeshes) { const d = Math.hypot(g.userData.cx - px, g.userData.cz - pz) - 145; g.visible = d < far * 0.92; }
+    const lim = Math.min(far * 0.85, 470); for (const g of this.chunkMeshes) { const d = Math.hypot(g.userData.cx - px, g.userData.cz - pz) - 145; g.visible = d < lim; }
   },
   // ---- 草と花（GPUで地形に沿わせる） ----
   initGrass(scene) {
