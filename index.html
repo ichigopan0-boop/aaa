@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>アストラの大地 〜目覚めし古代機兵〜</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game"></div>
+
+<!-- ローディング -->
+<div id="loading">
+  <div class="logo"><span class="logo-sub">ASTRA</span>アストラの大地<small>〜目覚めし古代機兵〜</small></div>
+  <div class="load-bar"><div id="load-fill"></div></div>
+  <div id="load-text">準備中…</div>
+</div>
+
+<!-- タイトル -->
+<div id="title" class="hidden">
+  <div class="logo"><span class="logo-sub">ASTRA</span>アストラの大地<small>〜目覚めし古代機兵〜</small></div>
+  <div id="title-main" class="title-menu">
+    <button class="tbtn" id="btn-continue">つづきから</button>
+    <button class="tbtn" id="btn-new">はじめから</button>
+    <button class="tbtn" id="btn-host">ホストになって友達と遊ぶ</button>
+    <button class="tbtn" id="btn-join">友達のワールドに参加</button>
+    <button class="tbtn small" id="btn-settings">設定</button>
+    <button class="tbtn small" id="btn-howto">操作方法</button>
+  </div>
+  <div id="title-join" class="title-menu hidden">
+    <div class="tlabel">ルームコードを入力（6文字）</div>
+    <input id="join-code" maxlength="6" autocomplete="off" placeholder="ABC123">
+    <button class="tbtn" id="btn-join-go">参加する</button>
+    <button class="tbtn small" id="btn-join-back">もどる</button>
+    <div id="join-status" class="tlabel"></div>
+  </div>
+  <div id="title-profile" class="title-menu hidden">
+    <div class="tlabel">あなたの名前</div>
+    <input id="profile-name" maxlength="10" autocomplete="off" placeholder="リンク">
+    <div class="tlabel">服の色</div>
+    <div id="color-pick"></div>
+    <button class="tbtn" id="btn-profile-ok">決定</button>
+    <button class="tbtn small" id="btn-profile-back">もどる</button>
+  </div>
+  <div class="title-foot">PC：WASD＋マウス ／ スマホ：タッチ操作に対応</div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="hud-tl">
+    <div id="hearts"></div>
+    <div id="mp-bar"><div id="mp-fill"></div><span id="mp-text"></span></div>
+    <div id="lv-box"><span id="lv-text">Lv 1</span><div id="xp-bar"><div id="xp-fill"></div></div></div>
+    <div id="buffs"></div>
+  </div>
+  <canvas id="stamina-wheel" width="64" height="64"></canvas>
+  <div id="hud-tr">
+    <canvas id="minimap" width="180" height="180"></canvas>
+    <div id="hud-info"><span id="clock"></span> <span id="weather-ic"></span> <span id="temp-ic"></span></div>
+    <div id="money"></div>
+  </div>
+  <div id="hud-br">
+    <div class="eq-slot" id="eq-melee"><canvas width="48" height="48"></canvas><div class="dur"><div></div></div><span class="eq-key">1</span></div>
+    <div class="eq-slot" id="eq-bow"><canvas width="48" height="48"></canvas><div class="dur"><div></div></div><span class="eq-key">2</span><span class="eq-sub" id="arrow-count"></span></div>
+    <div class="eq-slot" id="eq-rod"><canvas width="48" height="48"></canvas><div class="dur"><div></div></div><span class="eq-key">3</span></div>
+  </div>
+  <div id="quest-track"></div>
+  <div id="chat-log"></div>
+  <div id="notify"></div>
+  <div id="prompt" class="hidden"></div>
+  <div id="boss-bar" class="hidden"><div id="boss-name"></div><div class="bb-outer"><div id="boss-fill"></div></div></div>
+  <div id="center-msg"></div>
+  <div id="area-msg"></div>
+  <div id="crosshair" class="hidden"></div>
+  <div id="room-info" class="hidden"></div>
+  <div id="party"></div>
+  <div id="downed-msg" class="hidden"></div>
+  <div id="vignette"></div>
+</div>
+<div id="labels"></div>
+
+<!-- 会話 -->
+<div id="dialog" class="hidden">
+  <div id="dlg-name"></div>
+  <div id="dlg-text"></div>
+  <div id="dlg-choices"></div>
+  <div id="dlg-next">▼</div>
+</div>
+
+<!-- メニュー -->
+<div id="menu" class="hidden">
+  <div id="menu-tabs"></div>
+  <div id="menu-body"></div>
+  <div id="menu-foot">Tab / Esc で閉じる</div>
+  <button id="menu-close" class="xbtn">×</button>
+</div>
+
+<!-- マップ -->
+<div id="map-screen" class="hidden">
+  <canvas id="map-canvas"></canvas>
+  <div id="map-help">ドラッグ：移動　ホイール：拡大縮小　クリック：ワープ地点を選ぶ　右クリック/長押し：ピンを置く　M / Esc：閉じる</div>
+  <div id="map-legend"></div>
+  <button id="map-close" class="xbtn">×</button>
+</div>
+
+<!-- 汎用パネル（ショップ・料理など） -->
+<div id="panel" class="hidden">
+  <div id="panel-title"></div>
+  <div id="panel-body"></div>
+  <button id="panel-close" class="xbtn">×</button>
+</div>
+
+<!-- チャット・スタンプ -->
+<div id="chat-input-wrap" class="hidden"><input id="chat-input" maxlength="80" autocomplete="off" placeholder="メッセージを入力してEnter"></div>
+<div id="stamp-menu" class="hidden"></div>
+
+<!-- スマホ操作 -->
+<div id="touch-ui" class="hidden">
+  <div id="joy-zone"><div id="joy-base"><div id="joy-knob"></div></div></div>
+  <div id="look-zone"></div>
+  <div id="tbtns">
+    <button class="tb big" data-k="attack">攻撃</button>
+    <button class="tb" data-k="jump">ジャンプ</button>
+    <button class="tb" data-k="dodge">回避</button>
+    <button class="tb" data-k="dash">ダッシュ</button>
+    <button class="tb" data-k="bow">弓</button>
+    <button class="tb" data-k="magic">魔法</button>
+    <button class="tb" data-k="lock">ロック</button>
+    <button class="tb" data-k="interact" id="tb-interact">調べる</button>
+    <button class="tb" data-k="sneak">しゃがむ</button>
+    <button class="tb" data-k="heal">回復</button>
+  </div>
+  <div id="ttop">
+    <button class="tb s" data-k="menu">メニュー</button>
+    <button class="tb s" data-k="map">マップ</button>
+    <button class="tb s" data-k="whistle">馬笛</button>
+    <button class="tb s" data-k="arrowType">矢種</button>
+    <button class="tb s" data-k="chat">チャット</button>
+    <button class="tb s" data-k="stamp">スタンプ</button>
+    <button class="tb s" data-k="cycle1">武器</button>
+  </div>
+</div>
+
+<!-- 死亡・エンディング・フェード -->
+<div id="death-screen" class="hidden"><div class="ds-title">力尽きた…</div><div id="death-sub"></div><button class="tbtn" id="btn-revive">続ける</button></div>
+<div id="ending" class="hidden"><div id="ending-text"></div></div>
+<div id="fade"></div>
+<div id="toast"></div>
+
+<script src="lib/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');}</script>
+<script src="lib/peerjs.min.js"></script>
+<script src="js/core/util.js"></script>
+<script src="js/core/input.js"></script>
+<script src="js/core/audio.js"></script>
+<script src="js/data/items.js"></script>
+<script src="js/data/world.js"></script>
+<script src="js/data/text.js"></script>
+<script src="js/world/terrain.js"></script>
+<script src="js/world/collision.js"></script>
+<script src="js/world/sky.js"></script>
+<script src="js/world/water.js"></script>
+<script src="js/world/vegetation.js"></script>
+<script src="js/world/structures.js"></script>
+<script src="js/world/weather.js"></script>
+<script src="js/entities/models.js"></script>
+<script src="js/systems/particles.js"></script>
+<script src="js/systems/progress.js"></script>
+<script src="js/systems/camera.js"></script>
+<script src="js/systems/combat.js"></script>
+<script src="js/entities/projectiles.js"></script>
+<script src="js/entities/player.js"></script>
+<script src="js/entities/enemies.js"></script>
+<script src="js/entities/bosses.js"></script>
+<script src="js/entities/horse.js"></script>
+<script src="js/entities/animals.js"></script>
+<script src="js/entities/npc.js"></script>
+<script src="js/entities/pickups.js"></script>
+<script src="js/systems/shrine.js"></script>
+<script src="js/systems/quests.js"></script>
+<script src="js/systems/net.js"></script>
+<script src="js/systems/remote.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/ui/dialog.js"></script>
+<script src="js/ui/menu.js"></script>
+<script src="js/ui/map.js"></script>
+<script src="js/ui/touch.js"></script>
+<script src="js/ui/title.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
