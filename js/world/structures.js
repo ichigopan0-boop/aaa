@@ -366,7 +366,7 @@ G.Struct = {
     this.anim.push((dt, t) => { if (!bim.visible) return; blobs.forEach((b, i) => { const k = 1 + Math.sin(t * 1.5 + i) * 0.12; m4.compose(v.set(b.x, b.y, b.z), q, sc.set(b.s * k, b.s * 0.4, b.s * k)); bim.setMatrixAt(i, m4); }); bim.instanceMatrix.needsUpdate = true; });
     this.malice = { bim, em };
     // ボス戦の障壁
-    const bm = new THREE.MeshBasicMaterial({ color: 0xff2266, transparent: true, opacity: 0.25, side: THREE.DoubleSide, depthWrite: false });
+    const bm = new THREE.MeshBasicMaterial({ color: 0xff2266, transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false });
     this.barrier = this.mesh(new THREE.CylinderGeometry(47, 47, 30, 40, 1, true), 0, 0, cy + 14, 0, { mat: bm, shadow: false });
     this.barrier.visible = false; this.scene.add(this.barrier);
     this.barrierCols = [];

@@ -77,9 +77,10 @@ G.Enemy = class {
     if (this.def.quad) return out.set(this.pos.x + Math.sin(this.rotY) * 0.8, this.pos.y + 0.9, this.pos.z + Math.cos(this.rotY) * 0.8);
     return out.set(this.pos.x, this.pos.y + this.height * 0.9, this.pos.z);
   }
+  weakRadius() { return this.def.guardian ? 0.6 : this.def.trial ? 0.5 : 0.32; }
   hitTest(p, r) {
     const w = this.weakPoint(G.tmp.v4);
-    if (w && w.distanceTo(p) < r + (this.def.guardian ? 0.6 : 0.32)) return 'weak';
+    if (w && w.distanceTo(p) < r + this.weakRadius()) return 'weak';
     const cy = this.pos.y + this.yOffset;
     if (p.y < cy - 0.2 || p.y > cy + this.height + 0.2) return null;
     const d = Math.hypot(p.x - this.pos.x, p.z - this.pos.z);

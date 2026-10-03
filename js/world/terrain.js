@@ -74,7 +74,7 @@ G.Terrain = {
       if (dI < 14) h = Math.max(h, G.U.lerp(h, 162, S(14, 8, dI)));
     }
     // 古城の台地
-    h = G.U.lerp(h, 40 + Nz.fbm(x / 50, z / 50, 2) * 1.5, S(160, 100, m.dC));
+    h = G.U.lerp(h, 40 + Nz.fbm(x / 50, z / 50, 2) * 1.5 * S(50, 72, m.dC), S(160, 100, m.dC));
     // 川
     const dR = G.U.distPolyline(x, z, G.World.river);
     if (dR < 80) {
@@ -136,6 +136,11 @@ G.Terrain = {
     return bd < 1.15 ? best : G.World.regions[1];
   },
   computeColors() {
+    this.noGrass = [];
+    for (const s of G.World.shrines) this.noGrass.push([s.x, s.z, 6.5]);
+    for (const t of G.World.towers) this.noGrass.push([t.x, t.z, 7.5]);
+    for (const c of G.World.camps) this.noGrass.push([c.x, c.z, 4]);
+    this.noGrass.push([G.World.sealSword.x, G.World.sealSword.z, 4]);
     const n1 = this.N + 1, C = this.CELL, H = 800, hs = this.heights;
     const col = new THREE.Color(), tmp = new THREE.Color();
     const pal = {
@@ -184,8 +189,10 @@ G.Terrain = {
         // 水辺・水中
         if (h < 1.8) { col.lerp(pal.sand, G.U.smooth(1.8, 0.6, h) * (1 - snowAmt)); dens -= G.U.smooth(1.8, 0.8, h) * 2; }
         if (h < -0.5) { col.copy(pal.under).lerp(pal.deep, G.U.smooth(-1, -10, h)); dens = 0; }
-        // 村の中は草少なめ
+        // 村の中は草少なめ・建物や闘技場の足元には生やさない
         for (const v of G.World.villages) { const d = Math.hypot(x - v.x, z - v.z); if (d < v.flat) dens = Math.min(dens, 0.35 + d / v.flat * 0.4); }
+        if (Math.hypot(x, z) < 50) dens = 0;
+        for (const o of this.noGrass) if ((x - o[0]) ** 2 + (z - o[1]) ** 2 < o[2] * o[2]) dens = Math.min(dens, 0.05);
         // 明暗のゆらぎ
         const shade = 0.93 + nv2 * 0.12;
         this.colors[idx * 3] = col.r * shade; this.colors[idx * 3 + 1] = col.g * shade; this.colors[idx * 3 + 2] = col.b * shade;

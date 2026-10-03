@@ -33,6 +33,7 @@ G.Boss = class extends G.Enemy {
     scene.add(this.model); this.model.visible = false;
     this.mats = []; this.model.traverse(o => { if (o.isMesh && o.material && o.material.isMeshToonMaterial) this.mats.push(o); });
     if (k === 'omega') { this.home.y = 40; this.pos.y = 40; }
+    this.baseScale = this.model.scale.x;
   }
   attackTable() {
     const k = this.kind, f = this.phase >= 3 ? 0.75 : 1;
@@ -80,9 +81,10 @@ G.Boss = class extends G.Enemy {
     if (this.kind === 'lynel') return r.upper.head.getWorldPosition(out).setY(out.y + 0.3);
     return r.head.getWorldPosition(out).setY(out.y + 0.5);
   }
+  weakRadius() { return this.kind === 'omega' ? 1.3 : this.kind.startsWith('talus') ? 1.0 : this.kind === 'hinox' ? 0.8 : 0.6; }
   hitTest(p, r) {
     const w = this.weakPoint(G.tmp.v4);
-    const wr = this.kind === 'omega' ? 1.3 : this.kind.startsWith('talus') ? 1.0 : this.kind === 'hinox' ? 0.8 : 0.6;
+    const wr = this.weakRadius();
     if (w.distanceTo(p) < r + wr) return 'weak';
     const base = this.pos.y + (this.stun > 0 && this.kind === 'omega' ? -5 : 0);
     if (p.y < base - 0.3 || p.y > base + this.height) return null;
@@ -101,7 +103,7 @@ G.Boss = class extends G.Enemy {
     if (this.kind === 'lynel' && o.weak && o.src === 'arrow') { this.stun = Math.max(this.stun, 1.8); this.atk = null; }
     if (this.kind === 'omega') {
       if (o.weak && this.stun <= 0 && (o.src === 'arrow' || o.src === 'beam' || o.src === 'fireball' || o.src === 'ice')) { this.stun = 6; this.atk = null; this.state = 'chase'; G.Hud.centerMsg('オメガの目を撃ち抜いた！\nコアを攻撃しろ！', 2); G.Audio.play('explode', { pos: this.pos, range: 120 }); }
-      else if (this.stun > 0) mul = o.weak ? 2.5 : 1.0;
+      else if (this.stun > 0) mul = (o.weak || o.src === 'melee') ? 2.5 : 1.0;
       else mul = o.weak ? 0.6 : 0.25;
     }
     if (this.stun > 0 && !this.kind.startsWith('talus') && this.kind !== 'omega') mul *= 1.5;
@@ -352,8 +354,9 @@ G.Boss = class extends G.Enemy {
     const fl = this.flash > 0;
     if (fl !== this._fl) { this._fl = fl; for (const m of this.mats) { if (!m.userData.om) m.userData.om = m.material; m.material = fl ? G.Mat.glow(0xffffff) : m.userData.om; } }
     if (k === 'talus_fire') { const cool = this.cooled > 0; if (cool !== this._cool) { this._cool = cool; for (const m of this.mats) if (!fl) m.material = cool ? G.Mat.toon(0x6a6a6a) : (m.userData.om || m.material); } }
-    if (!this.alive && this.deadT > 0.2) { this.model.scale.setScalar(Math.max(0.01, 1 - (this.deadT - 0.2) / 1.3)); if (Math.random() < 0.5) G.Particles.poof(G.tmp.v1.copy(this.pos).setY(this.pos.y + this.height * Math.random()), 0x6a2a7a, 1); }
-    else if (this.alive && this.model.scale.x !== 1 && !this.rig.root.userData.keepScale) this.model.scale.setScalar(1);
+    const bs = this.baseScale || 1;
+    if (!this.alive && this.deadT > 0.2) { this.model.scale.setScalar(bs * Math.max(0.01, 1 - (this.deadT - 0.2) / 1.3)); if (Math.random() < 0.5) G.Particles.poof(G.tmp.v1.copy(this.pos).setY(this.pos.y + this.height * Math.random()), 0x6a2a7a, 1); }
+    else if (this.alive && this.model.scale.x !== bs) this.model.scale.setScalar(bs);
   }
 };
 

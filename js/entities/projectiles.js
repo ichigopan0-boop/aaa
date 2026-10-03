@@ -117,8 +117,13 @@ G.Proj = {
       // 敵
       for (const e of G.Enemies.nearby(pos.x, pos.z, 10)) {
         if (!e.alive || p.hit.has(e)) continue;
-        const h = e.hitTest(pos, p.radius);
+        let h = e.hitTest(pos, p.radius);
         if (!h) continue;
+        // 体の内側にある弱点（目など）を先読みで判定
+        if (h === 'body' && e.weakPoint) {
+          const w = e.weakPoint(new THREE.Vector3());
+          if (w) { const dir = G.tmp.v2.copy(p.vel).normalize(); const t = G.U.clamp(G.tmp.v3.subVectors(w, pos).dot(dir), 0, 4.5); if (G.tmp.v3.copy(pos).addScaledVector(dir, t).distanceTo(w) < e.weakRadius() + p.radius) h = 'weak'; }
+        }
         p.hit.add(e);
         this.onEnemyHit(p, e, h === 'weak');
         if (p.kind !== 'beam') return true;
