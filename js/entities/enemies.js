@@ -404,7 +404,7 @@ G.Enemies = {
     for (const [x, z] of G.World.guardians) this.add(new G.Enemy(id++, 'guardian', x, z));
     // ボス
     G.Bosses.spawnAll(id);
-    for (const e of this.list) { e.pos.y = G.Col.floorAt(e.pos.x, e.pos.z, 9999); if (e.lookout) e.pos.y = e.lookout.y; e.home.y = e.pos.y; e.buildModel(scene); e.baseScale = e.model.scale.x; }
+    for (const e of this.list) { e.pos.y = G.Col.spawnY(e.pos.x, e.pos.z); if (e.lookout) e.pos.y = e.lookout.y; e.home.y = e.pos.y; e.buildModel(scene); e.baseScale = e.model.scale.x; }
     // レーザー照準線
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
     this.laserLine = new THREE.Line(lg, new THREE.LineBasicMaterial({ color: 0xff3020, transparent: true, opacity: 0.8 })); this.laserLine.frustumCulled = false; this.laserLine.visible = false; scene.add(this.laserLine);
@@ -515,7 +515,7 @@ G.Enemies = {
       if (live < 6) {
         const a = Math.random() * 6.28, d = 18 + Math.random() * 15, x = G.player.pos.x + Math.cos(a) * d, z = G.player.pos.z + Math.sin(a) * d;
         if (G.Terrain.getHeight(x, z) > 1.5 && !G.World.villages.some(v => Math.hypot(v.x - x, v.z - z) < v.flat + 20)) {
-          const e = this.addLocal('stal', x, G.Col.floorAt(x, z, 9999), z); e.noRespawn = true;
+          const e = this.addLocal('stal', x, G.Col.spawnY(x, z), z); e.noRespawn = true;
           e.state = 'alert'; e.target = G.player; G.Particles.dust(e.pos);
         }
       }

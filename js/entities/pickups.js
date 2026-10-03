@@ -139,7 +139,7 @@ G.Pickups = {
       ['sp7', 120, -60, { k: 'm', id: 'ancient_screw', n: 4 }], ['sp8', 600, -350, { k: 'w', id: 'meteor_rod' }], ['sp9', -640, 400, { k: 'a', id: 'bomb', n: 8 }],
       ['sp10', 250, 600, { k: 'w', id: 'golem_hammer' }],
     ];
-    for (const [id, x, z, item] of special) this.addChest(id, x, G.Col.floorAt(x, z, 9999), z, item, { ry: r.range(0, 6.28) });
+    for (const [id, x, z, item] of special) this.addChest(id, x, G.Col.spawnY(x, z), z, item, { ry: r.range(0, 6.28) });
     // キャンプの宝箱
     G.World.camps.forEach((c, i) => { const x = c.x - 3, z = c.z + 4; this.addChest('camp' + i, x, G.Terrain.getHeight(x, z), z, this.zoneLoot(c.zone, r), { camp: i }); });
   },

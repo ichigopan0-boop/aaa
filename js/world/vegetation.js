@@ -147,7 +147,7 @@ G.Veg = {
       (b.list[it.type] = b.list[it.type] || []).push(it);
       // 当たり判定
       const T = this.types[it.type];
-      if (T.col) { G.Col.addCyl(it.x, it.z, T.col.r * it.s, it.h - 2, it.h + T.col.h * it.s, { tree: true }); this.treeList.push(it); }
+      if (T.col) { G.Col.addCyl(it.x, it.z, T.col.r * it.s, it.h - 2, it.h + T.col.h * it.s, { tree: true, noFloor: true }); this.treeList.push(it); }
       if (T.rock && it.s > 1.0) G.Col.addCyl(it.x, it.z, it.s * 0.75, it.h - 2, it.h + it.s * 0.7, { rock: true });
       if (it.type === 'broad' && G.U.hash2(it.x * 10, it.z * 10) < 0.07) this.appleTrees.push(it);
     }
@@ -193,7 +193,7 @@ G.Veg = {
     const r = G.U.rng(5);
     for (let i = 0; i < 9; i++) { const f = new THREE.Mesh(new THREE.IcosahedronGeometry(r.range(6, 9), 0), fm); f.position.set(r.range(-9, 9), 26 + r.range(-3, 5), r.range(-9, 9)); f.castShadow = true; g.add(f); }
     g.position.set(x, h - 1, z); scene.add(g);
-    G.Col.addCyl(x, z, 5, h - 2, h + 24, { tree: true });
+    G.Col.addCyl(x, z, 5, h - 2, h + 24, { tree: true, noFloor: true });
   },
   updateVisibility(px, pz, far) {
     const lim = Math.min(far * 0.85, 470); for (const g of this.chunkMeshes) { const d = Math.hypot(g.userData.cx - px, g.userData.cz - pz) - 145; g.visible = d < lim; }

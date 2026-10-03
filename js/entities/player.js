@@ -63,7 +63,7 @@ G.Player = class {
   facing(out) { return (out || new THREE.Vector3()).set(Math.sin(this.rotY), 0, Math.cos(this.rotY)); }
   // ---- テレポート ----
   teleport(x, y, z, ry) {
-    this.pos.set(x, y != null ? y : G.Col.floorAt(x, z, 9999) + 0.05, z); this.vel.set(0, 0, 0);
+    this.pos.set(x, y != null ? y : G.Col.spawnY(x, z) + 0.05, z); this.vel.set(0, 0, 0);
     if (ry != null) this.rotY = ry;
     this.state = 'ground'; this.climb = null; this.attack = null; this.dodge = null; this.airMaxY = this.pos.y;
     this.lastSafe.copy(this.pos);

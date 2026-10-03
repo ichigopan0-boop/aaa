@@ -88,6 +88,8 @@ G.Col = {
     }
     return res;
   },
+  // 出現・ワープ用の地面の高さ（木のてっぺんや屋根の上を避ける）
+  spawnY(x, z) { const t = G.Terrain.getHeight(x, z); return t < -500 ? this.floorAt(x, z, 9999) : this.floorAt(x, z, t + 2.5); },
   // 天井（ジャンプで頭をぶつける）
   ceilingAt(x, z, y, r) {
     let best = 1e9;

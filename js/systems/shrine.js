@@ -33,7 +33,7 @@ G.Shrine = {
       this.clear();
       this.inside = false; this.insideId = null; G.Sky.indoor = false;
       const x = this.ret.x, z = this.ret.z;
-      G.player.teleport(x, G.Col.floorAt(x, z, 9999) + 0.05, z);
+      G.player.teleport(x, G.Col.spawnY(x, z) + 0.05, z);
       G.Audio.setBgm(null); G.Game.musicT = 0;
       G.UI.fade(false);
       G.Prog.save();
