@@ -247,7 +247,7 @@ G.Struct = {
   buildTower(t) {
     const y = this.groundY(t.x, t.z), H = 46; const g = new THREE.Group();
     const stone = 0x5f5a54, dark = 0x3e3a36;
-    this.cyl(g, 6, 7, 1.2, dark, 0, 0.6, 0, 8);
+    this.cyl(g, 6, 7, 0.6, dark, 0, 0.27, 0, 8);
     this.box(g, 4.4, H, 4.4, stone, 0, H / 2, 0);
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
       const leg = this.mesh(new THREE.BoxGeometry(0.7, H + 2, 0.7), dark, sx * 3.6, (H + 2) / 2, sz * 3.6); g.add(leg);
@@ -260,9 +260,9 @@ G.Struct = {
     const term = this.mesh(new THREE.CylinderGeometry(0.5, 0.8, 1.4, 8), stone, 0, H + 1.7, 0); g.add(term);
     const orb = this.mesh(new THREE.SphereGeometry(0.4, 10, 8), 0, 0, H + 2.7, 0, { mat: glowMat, shadow: false }); g.add(orb);
     g.position.set(t.x, y, t.z); this.scene.add(g);
-    G.Col.box(t.x, y - 2, t.z, 4.6, H + 2, 4.6, { climb: true, tower: t.id });
-    G.Col.box(t.x, y + H, t.z, 11, 1, 11, { climb: true });
-    G.Col.addCyl(t.x, t.z, 6.5, y - 2, y + 1.2, {});
+    G.Col.box(t.x, y - 2, t.z, 4.6, H + 3, 4.6, { climb: true, tower: t.id });
+    G.Col.box(t.x, y + H, t.z, 11, 1, 11, { noWall: true, noCam: true });
+    G.Col.addCyl(t.x, t.z, 6.5, y - 2, y + 0.55, {});
     G.Col.addCyl(t.x, t.z, 0.8, y + H + 1, y + H + 2.4, {});
     this.towerObjs[t.id] = { g, glowMat, top: y + H + 1, x: t.x, z: t.z };
     G.Interact.add({ x: t.x, y: y + H + 1, z: t.z, r: 3, label: '観測塔を起動する', priority: 1, cond: () => !G.Prog.data.towers[t.id], action: () => G.Quests.activateTower(t) });

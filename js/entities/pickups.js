@@ -110,6 +110,7 @@ G.Pickups = {
       if (G.World.villages.some(v => Math.hypot(v.x - x, v.z - z) < v.flat + 15)) continue;
       if (G.World.shrines.some(s => Math.hypot(s.x - x, s.z - z) < 10) || G.World.towers.some(s => Math.hypot(s.x - x, s.z - z) < 10)) continue;
       if (Math.hypot(x, z) < 52) continue;
+      { const L = G.World.lostWoods; if (Math.hypot(x - L.cx, z - L.cz) < L.r + 5 && G.U.distPolyline(x, z, L.path) > 18) continue; }
       if (Math.hypot(x - G.World.lava.x, z - G.World.lava.z) < 50) continue;
       if (out.some(o => Math.hypot(o.x - x, o.z - z) < minDist)) continue;
       // 周囲より高い？

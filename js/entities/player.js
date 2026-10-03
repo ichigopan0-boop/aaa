@@ -562,7 +562,8 @@ G.Player = class {
     let my = w.my, mx = w.mx;
     if (c.jump > 0) { c.jump -= dt; my = 4.2; mx = 0; }
     const moving = Math.abs(my) + Math.abs(mx) > 0.1;
-    this.useStamina((moving ? 9 : 1.5) * dt * (1 - P.skill('climb') * 0.2));
+    const towerEase = c.mode === 'box' && c.col.tower ? 0.3 : 1; // 観測塔は登りやすい
+    this.useStamina((moving ? 9 : 1.5) * dt * (1 - P.skill('climb') * 0.2) * towerEase);
     this.rig.phase += (moving ? 6 : 0) * dt;
     if (c.mode === 'terrain') {
       const n = G.Terrain.getNormal(this.pos.x, this.pos.z, G.tmp.v1);

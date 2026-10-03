@@ -29,7 +29,7 @@ G.Quests = {
     const d = G.Prog.data, f = d.flags, c = this.counts();
     const q = [];
     if (!f.metElder) q.push({ main: true, title: '目覚め', desc: 'ハジマリ村の長老と話そう。', target: G.Struct.villageSpots.hajimari && G.Struct.villageSpots.hajimari.elder });
-    else if (!f.paraglider) q.push({ main: true, title: 'はじまりの試練', desc: d.shrines.s01 ? '長老ロウに報告しよう。' : '村の東にある「目覚めの祠」で試練を受けよう。', target: d.shrines.s01 ? G.Struct.villageSpots.hajimari.elder : G.World.shrines[0] });
+    else if (!f.paraglider) q.push({ main: true, title: 'はじまりの試練', desc: d.shrines.s01 ? '長老ロウに報告しよう。' : '村の南東にある「目覚めの祠」で試練を受けよう。', target: d.shrines.s01 ? G.Struct.villageSpots.hajimari.elder : G.World.shrines[0] });
     q.push({ main: true, title: '古代機兵オメガを止めよ', desc: f.omegaDefeated ? 'オメガを倒した！ アストラの大地に平和が戻った。（再戦も可能）' : '北の古城跡で暴走するオメガを倒す。最初から挑めるが非常に強い。目安：レベル30・ハート15以上。', done: !!f.omegaDefeated, target: { x: 0, z: 0 } });
     q.push({ title: '観測塔を起動する', desc: '塔の頂上の台座を調べると、その地方の地図が手に入る。', prog: c.towers + ' / ' + c.towersT, done: c.towers >= c.towersT });
     q.push({ title: '祈りの祠を巡る', desc: '祠の試練を越えて祝福の光を集めよう。4つで女神像からハートかがんばりがもらえる。', prog: c.shrines + ' / ' + c.shrinesT, done: c.shrines >= c.shrinesT });
@@ -99,7 +99,6 @@ G.Quests = {
     if (this._ending) return; this._ending = true;
     const d = G.Prog.data; const first = !d.flags.omegaDefeated;
     d.flags.omegaDefeated = true;
-    const pl = G.player; if (pl.pos.distanceTo(new THREE.Vector3(0, 40, 0)) < 120) G.Prog.addXP(15000);
     G.Prog.save(); this.omegaEngaged(false);
     G.cinematic = true;
     G.Audio.setBgm(null);

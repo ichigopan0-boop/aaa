@@ -354,10 +354,10 @@ G.Enemy = class {
   // ネットワークから受信した状態を補間
   applyNet(dt) {
     const n = this.netTarget; if (!n) return;
-    const k = 1 - Math.exp(-12 * dt);
+    const k = 1 - Math.exp(-12 * dt), ox = this.pos.x, oz = this.pos.z;
     this.pos.x += (n.x - this.pos.x) * k; this.pos.y += (n.y - this.pos.y) * k; this.pos.z += (n.z - this.pos.z) * k;
     this.rotY = G.U.dampAngle(this.rotY, n.r, 12, dt);
-    this.vel.set((n.x - (this._px || n.x)) / Math.max(0.05, n.dt || 0.1), 0, (n.z - (this._pz || n.z)) / Math.max(0.05, n.dt || 0.1));
+    if (dt > 0) { const vx = (this.pos.x - ox) / dt, vz = (this.pos.z - oz) / dt; this.vel.x = G.U.damp(this.vel.x, vx, 8, dt); this.vel.z = G.U.damp(this.vel.z, vz, 8, dt); }
     if (this.atk) { this.atk.t += dt; }
     this.stateT += dt;
   }
@@ -497,7 +497,7 @@ G.Enemies = {
       } else {
         if (!e.alive) {
           e.deadT += dt;
-          if (!e.local && !e.boss) { e.respawnT -= dt; if (e.respawnT <= 0 && near > 100) this.respawn(e); }
+          if (!e.local && (!e.boss || e.kind === 'omega')) { e.respawnT -= dt; if (e.respawnT <= 0 && near > 100) this.respawn(e); }
         } else if (near < 150 || e.state === 'attack') {
           e.update(dt);
           e.checkHitLocal();
@@ -527,6 +527,7 @@ G.Enemies = {
     e.alive = true; e.hp = e.maxHp; e.state = 'idle'; e.pos.copy(e.home); e.vel.set(0, 0, 0); e.burn = e.frozen = e.stun = 0; e.atk = null; e.contrib.clear(); e.deadT = 0;
     if (e.droppedWeapon && !e.weaponId) { e.weaponId = e.droppedWeapon; e.droppedWeapon = null; if (e.wmesh && e.rig.handR) e.rig.handR.add(e.wmesh); }
     e.model.scale.setScalar(e.baseScale || 1);
+    if (e.onRespawn) e.onRespawn();
     if (G.Net.role === 'host') G.Net.broadcast({ t: 'erespawn', id: e.id });
   },
   // 宿で寝た時など

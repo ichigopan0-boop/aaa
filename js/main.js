@@ -126,7 +126,7 @@ G.Game = {
     this.tick(dt, true);
   },
   // テスト用：描画なしで時間を進める
-  steps(n, dt = 1 / 30) { for (let i = 0; i < n; i++) this.tick(dt, i === n - 1); },
+  steps(n, dt = 1 / 30, render = true) { for (let i = 0; i < n; i++) this.tick(dt, render && i === n - 1); },
   tick(dt, render) {
     const now = performance.now();
     G.frame++;

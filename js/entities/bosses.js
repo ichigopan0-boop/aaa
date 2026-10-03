@@ -61,6 +61,7 @@ G.Boss = class extends G.Enemy {
     return {};
   }
   isAttackKind(st) { return !!this.attackTable()[st]; }
+  onRespawn() { this.engaged = false; this.phase = 1; this.stun = 0; this.cooled = 0; this.maxHp = this.baseHp; this.hp = this.maxHp; this.state = this.kind === 'hinox' ? 'sleep' : 'idle'; this.target = null; this.collider.active = true; if (this.kind === 'omega') this.pos.set(this.home.x, 40, this.home.z); }
   startAttack(kind) {
     const a = this.attackTable()[kind]; if (!a) return;
     this.atk = Object.assign({ kind, t: 0 }, a); this.atkSeq++;

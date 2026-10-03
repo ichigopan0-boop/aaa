@@ -88,7 +88,7 @@ G.World.sealSword = { x: -520, z: -60, needHearts: 10 };
 G.World.lostWoods = {
   // 森の中心部（ここに入ると霧の迷い判定）
   cx: -500, cz: -40, r: 150,
-  path: [[-380, 40], [-420, 20], [-450, -10], [-470, -30], [-490, -45], [-520, -60]],
+  path: [[-380, 40], [-420, 20], [-450, -10], [-470, -30], [-490, -45], [-520, -60], [-535, -80], [-545, -95]],
   entrance: [-370, 50],
 };
 
@@ -107,7 +107,7 @@ G.World.camps = [
   { x: -200, z: 480, zone: 1, n: 3 }, { x: -380, z: 470, zone: 2, n: 4, archer: true }, { x: -500, z: 330, zone: 2, n: 4 },
   { x: -330, z: 200, zone: 2, n: 3 }, { x: 250, z: 260, zone: 2, n: 4, lizal: true }, { x: 470, z: 330, zone: 2, n: 4, lizal: true },
   { x: 540, z: 560, zone: 2, n: 3, lizal: true }, { x: 100, z: 150, zone: 3, n: 4, archer: true }, { x: -120, z: 170, zone: 3, n: 4 },
-  { x: 180, z: -160, zone: 3, n: 4 }, { x: -380, z: -150, zone: 3, n: 4, archer: true }, { x: -580, z: 60, zone: 3, n: 3 },
+  { x: 180, z: -160, zone: 3, n: 4 }, { x: -380, z: -150, zone: 3, n: 4, archer: true }, { x: -650, z: 130, zone: 3, n: 3 },
   { x: -300, z: -300, zone: 3, n: 4 }, { x: 60, z: -430, zone: 3, n: 4, archer: true }, { x: -250, z: -520, zone: 3, n: 4 },
   { x: 300, z: -300, zone: 3, n: 4 }, { x: 600, z: -120, zone: 3, n: 4, archer: true }, { x: 420, z: -460, zone: 4, n: 4 },
   { x: -620, z: -460, zone: 4, n: 4, archer: true }, { x: -500, z: -640, zone: 4, n: 3 }, { x: 80, z: -80, zone: 4, n: 4, archer: true },
